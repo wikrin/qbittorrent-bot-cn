@@ -142,7 +142,7 @@ def failwithmessage_job(func):
 
 
 def get_human_readable(size, precision=2):
-    suffixes = ["B", "  KB", "MB", "GB", "TB"]
+    suffixes = ["B", "KB", "MB", "GB", "TB"]
     suffix_index = 0
     while size > 1024 and suffix_index < 4:
         suffix_index += 1  # increment the index of the suffix
