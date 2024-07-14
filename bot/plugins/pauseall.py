@@ -15,22 +15,28 @@ logger = logging.getLogger(__name__)
 @u.check_permissions(required_permission=Permissions.EDIT)
 @u.failwithmessage
 def on_resume_all_command(update: Update, context: CallbackContext):
-    logger.info('resume all command from %s', update.message.from_user.first_name)
+    logger.info("resume all command from %s", update.message.from_user.first_name)
 
     qb.resume_all()
 
-    update.message.reply_text('Resumed all torrents')
+    update.message.reply_text("全部继续")
 
 
 @u.check_permissions(required_permission=Permissions.EDIT)
 @u.failwithmessage
 def on_pause_all_command(update: Update, context: CallbackContext):
-    logger.info('pause all command from %s', update.message.from_user.first_name)
+    logger.info("pause all command from %s", update.message.from_user.first_name)
 
     qb.pause_all()
 
-    update.message.reply_text('Paused all torrents')
+    update.message.reply_text("全部暂停")
 
 
-updater.add_handler(CommandHandler(['resumeall'], on_resume_all_command), bot_command=BotCommand("resumeall", "resume all torrents"))
-updater.add_handler(CommandHandler(['pauseall'], on_pause_all_command), bot_command=BotCommand("pauseall", "pause all torrents"))
+updater.add_handler(
+    CommandHandler(["resumeall"], on_resume_all_command),
+    bot_command=BotCommand("resumeall", "全部继续"),
+)
+updater.add_handler(
+    CommandHandler(["pauseall"], on_pause_all_command),
+    bot_command=BotCommand("pauseall", "全部暂停"),
+)
