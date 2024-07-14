@@ -61,6 +61,7 @@ def add_from_magnet(update: Update, context: CallbackContext):
     magnet_link = update.message.text
 
     kwargs = get_qbt_request_kwargs()
+    kwargs.update(get_argv(magnet_link))
 
     qb.download_from_link(magnet_link, **kwargs)
     # always returns an empty json:
@@ -146,6 +147,7 @@ def add_from_url(update: Update, context: CallbackContext):
     torrent_url = update.message.text
 
     kwargs = get_qbt_request_kwargs()
+    kwargs.update(get_argv(torrent_url))
 
     qb.download_from_link(torrent_url, **kwargs)
     # always returns an empty json:
@@ -156,6 +158,26 @@ def add_from_url(update: Update, context: CallbackContext):
     notify_addition(
         update.effective_chat.id, context.bot, update.effective_user, torrent_url
     )
+
+
+def get_argv(text: str) -> dict:
+    argv: dict = {}
+    result = text.split()
+    for i, v in enumerate(result):
+        if v == "--tags":
+            try:
+                argv["tags"] = result[i + 1]
+                result.pop(i)
+            except IndexError:
+                return {}
+
+        elif v == "--category" or v == "-c":
+            try:
+                argv["category"] = result[i + 1]
+                result.pop(i)
+            except IndexError:
+                return {}
+    return argv
 
 
 updater.add_handler(MessageHandler(Filters.document, add_from_file))
