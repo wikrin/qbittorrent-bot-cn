@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 @u.check_permissions(required_permission=Permissions.EDIT)
 @u.failwithmessage
 def on_remove_dead_trackers_command(update: Update, context: CallbackContext):
-    logger.info('remove dead trackers from %s', update.message.from_user.first_name)
+    logger.info("remove dead trackers from %s", update.message.from_user.first_name)
 
-    torrents = qb.torrents(filter='all', get_torrent_generic_properties=False)
+    torrents = qb.torrents(filter="all", get_torrent_generic_properties=False)
 
     removed_trackers = 0
     affected_torrents = 0
@@ -37,7 +37,9 @@ def on_remove_dead_trackers_command(update: Update, context: CallbackContext):
             removed_trackers += len(urls_to_remove)
             affected_torrents += 1
 
-    update.message.reply_text(f"Removed {removed_trackers} trackers from {affected_torrents} torrents")
+    update.message.reply_text(
+        f"从 {affected_torrents} torrents 移除 {removed_trackers} trackers "
+    )
 
 
 # updater.add_handler(CommandHandler(['removedeadtrackers', 'rdt'], on_remove_dead_trackers_command), bot_command=BotCommand("removedeadtrackers", "remove dead trackers from all torrents"))

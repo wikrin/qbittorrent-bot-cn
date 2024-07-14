@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @u.check_permissions(required_permission=Permissions.ADMIN)
 @u.failwithmessage
 def on_freespace_command(update: Update, context: CallbackContext):
-    logger.info('/space from %s', update.message.from_user.first_name)
+    logger.info("/space from %s", update.message.from_user.first_name)
 
     drive_free_space = u.free_space(qb.save_path)
     text = f"{drive_free_space} free, save path: <code>{qb.save_path}</code>"
@@ -23,4 +23,7 @@ def on_freespace_command(update: Update, context: CallbackContext):
     update.message.reply_html(text)
 
 
-updater.add_handler(CommandHandler(["space", "freespace"], on_freespace_command), bot_command=BotCommand("freespace", "free space from download path"))
+updater.add_handler(
+    CommandHandler(["space", "freespace"], on_freespace_command),
+    bot_command=BotCommand("freespace", "磁盘剩余空间"),
+)

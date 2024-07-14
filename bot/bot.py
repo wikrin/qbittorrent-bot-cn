@@ -87,7 +87,7 @@ class CustomUpdater(Updater):
             logger.debug('importing module [%s]', import_path)
             importlib.import_module(import_path)
 
-    def set_bot_commands(self, show_first: [list, None] = None):
+    def set_bot_commands(self, show_first: list = None):
         if show_first:
             show_first = [c.lower() for c in show_first]
 

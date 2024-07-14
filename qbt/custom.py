@@ -15,60 +15,89 @@ logger = logging.getLogger(__name__)
 
 # https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#get-torrent-list
 TORRENTS_CATEGORIES = (
-    'all',
-    'downloading',
-    'seeding',
-    'completed',
-    'paused',
-    'active',
-    'inactive',
-    'resumed',
-    'stalled',
-    'stalled_uploading',
-    'stalled_downloading',
-    'errored',
+    "all",
+    "downloading",
+    "seeding",
+    "completed",
+    "paused",
+    "active",
+    "inactive",
+    "resumed",
+    "stalled",
+    "stalled_uploading",
+    "stalled_downloading",
+    "errored",
 )
 
+TORRENTS_CATEGORIES_ZH_CN = {
+    "all": "全部",
+    "downloading": "下载中",
+    "seeding": "做种中",
+    "completed": "已完成",
+    "paused": "暂停中",
+    "active": "活动中",
+    "inactive": "不活动",
+    "resumed": "已恢复",
+    "stalled": "停滞",
+    "stalled_uploading": "停滞做种",
+    "stalled_downloading": "停滞下载",
+    "errored": "出错",
+}
+
+TORRENT_STRING_COMPACT = """\
+• <b>{short_name_escaped}</b> [<a href="{info_deeplink}">info</a>]
+    进度: {progress_pretty}%   总大小: {size_pretty}
+    状态: {state_pretty}   速度: <b>{generic_speed_pretty}/s</b>
+"""
+
 STATES_DICT = {
-    'error': 'error',
-    'missingFiles': 'missing files',
-    'uploading': 'uploading',
-    'pausedUP': 'paused (download finished)',
-    'queuedUP': 'queued for upload',
-    'stalledUP': 'stalled (uploading)',
-    'checkingUP': 'checking file (download completed)',
-    'forcedUP': 'forced upload',
-    'allocating': 'allocating disk space',
-    'downloading': 'downloading',
-    'metaDL': 'fetching metadata',
-    'pausedDL': 'paused (download not finished)',
-    'queuedDL': 'queued for download',
-    'stalledDL': 'stalled (downloading)',
-    'checkingDL': 'checking file (downloading)',
-    'forcedDL': 'forced download',
-    'checkingResumeData': 'startup: checking data',
-    'moving': 'moving',
-    'unknown': 'unknown status'
+    "error": "错误",
+    "missingFiles": "文件丢失",
+    "uploading": "做种中",
+    "pausedUP": "暂停(下载完成)",
+    "queuedUP": "排队做种",
+    "stalledUP": "停滞(做种)",
+    "checkingUP": "检查文件(下载完成)",
+    "forcedUP": "强制做种",
+    "allocating": "分配磁盘空间",
+    "downloading": "下载中",
+    "metaDL": "正在获取元数据",
+    "pausedDL": "暂停(下载未完成)",
+    "queuedDL": "排队下载",
+    "stalledDL": "停滞(下载)",
+    "checkingDL": "检查文件(下载)",
+    "forcedDL": "强制下载",
+    "checkingResumeData": "检查数据",
+    "moving": "移动中",
+    "unknown": "未知状态",
 }
 
 # https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#get-torrent-list
 # https://github.com/qbittorrent/qBittorrent/wiki/WebUI-API-(qBittorrent-4.1)#get-torrent-generic-properties
 NEW_ATTRS = {
-    'state_pretty': lambda t: STATES_DICT.get(t['state'], t['state']),
-    'size_pretty': lambda t: u.get_human_readable(t['total_size']),  # already a string apparently
-    'dl_speed_pretty': lambda t: u.get_human_readable(t['dl_speed']),
-    'up_speed_pretty': lambda t: u.get_human_readable(t['up_speed']),
-    'dlspeed_pretty': lambda t: u.get_human_readable(t['dlspeed']),
-    'upspeed_pretty': lambda t: u.get_human_readable(t['upspeed']),
-    'name_escaped': lambda t: u.html_escape(t['name']),
-    'generic_speed_pretty': lambda t: u.get_human_readable(t['generic_speed']),
-    'progress_pretty': lambda t: math.floor(t['progress'] * 100),  # eg. 99.9% should be rounded to 99%
-    'eta_pretty': lambda t: str(datetime.timedelta(seconds=t['eta'])),  # apparently it's already a string?
-    'time_elapsed_pretty': lambda t: str(datetime.timedelta(seconds=t['time_elapsed'])),
-    'force_start_pretty': lambda t: 'yes' if t['force_start'] else 'no',
-    'share_ratio_rounded': lambda t: round(t['ratio'], 2),
-    'dl_limit_pretty': lambda t: 'no limit' if t['dl_limit'] == -1 else u.get_human_readable(t['dl_limit']),
-    'auto_tmm_string': lambda t: 'yes' if t['auto_tmm'] else 'no',
+    "state_pretty": lambda t: STATES_DICT.get(t["state"], t["state"]),
+    "size_pretty": lambda t: u.get_human_readable(
+        t["total_size"]
+    ),  # already a string apparently
+    "dl_speed_pretty": lambda t: u.get_human_readable(t["dl_speed"]),
+    "up_speed_pretty": lambda t: u.get_human_readable(t["up_speed"]),
+    "dlspeed_pretty": lambda t: u.get_human_readable(t["dlspeed"]),
+    "upspeed_pretty": lambda t: u.get_human_readable(t["upspeed"]),
+    "name_escaped": lambda t: u.html_escape(t["name"]),
+    "generic_speed_pretty": lambda t: u.get_human_readable(t["generic_speed"]),
+    "progress_pretty": lambda t: math.floor(
+        t["progress"] * 100
+    ),  # eg. 99.9% should be rounded to 99%
+    "eta_pretty": lambda t: str(
+        datetime.timedelta(seconds=t["eta"])
+    ),  # apparently it's already a string?
+    "time_elapsed_pretty": lambda t: str(datetime.timedelta(seconds=t["time_elapsed"])),
+    "force_start_pretty": lambda t: "yes" if t["force_start"] else "no",
+    "share_ratio_rounded": lambda t: round(t["ratio"], 2),
+    "dl_limit_pretty": lambda t: "no limit"
+    if t["dl_limit"] == -1
+    else u.get_human_readable(t["dl_limit"]),
+    "auto_tmm_string": lambda t: "yes" if t["auto_tmm"] else "no",
 }
 
 TORRENT_STRING = """<code>{name_escaped}</code>
@@ -95,21 +124,29 @@ TORRENT_STRING = """<code>{name_escaped}</code>
 
 
 class Torrent:
-    def __init__(self, qbt, torrent_dict: dict, get_torrent_generic_properties: bool = False):
+    def __init__(
+        self, qbt, torrent_dict: dict, get_torrent_generic_properties: bool = False
+    ):
         self._torrent_dict: dict = torrent_dict
         self._qbt: CustomClient = qbt
-        self.hash = self._torrent_dict['hash']
+        self.hash = self._torrent_dict["hash"]
 
         self.refresh(
             get_torrent_generic_properties=get_torrent_generic_properties,
-            refresh_torrent_dict=False
+            refresh_torrent_dict=False,
         )
 
         self.actions_keyboard = kb.actions_markup(self.hash)
 
-    def refresh(self, refresh_torrent_dict: bool = True, get_torrent_generic_properties: bool = False):
+    def refresh(
+        self,
+        refresh_torrent_dict: bool = True,
+        get_torrent_generic_properties: bool = False,
+    ):
         if refresh_torrent_dict:
-            self._torrent_dict = self._qbt.torrent(self.hash, get_torrent_generic_properties=False).dict()
+            self._torrent_dict = self._qbt.torrent(
+                self.hash, get_torrent_generic_properties=False
+            ).dict()
 
         if get_torrent_generic_properties:
             self.get_additional_torrent_properties()
@@ -126,31 +163,41 @@ class Torrent:
                 self._torrent_dict[key] = val
 
     def _enrich_torrent_dict(self):
-        if 'progress' in self._torrent_dict:
-            self._torrent_dict['eta'] = 0 if self._torrent_dict['progress'] == 1 else self._torrent_dict['eta']  # set eta = 0 for completed torrents
-            self._torrent_dict['progress_bar'] = u.build_progress_bar(self._torrent_dict['progress'])
-        if 'hash' in self._torrent_dict:
-            self._torrent_dict['manage_deeplink'] = 'https://t.me/{}?start=manage{}'.format(
-                self._qbt._bot_username,
-                self._torrent_dict['hash']
+        if "progress" in self._torrent_dict:
+            self._torrent_dict["eta"] = (
+                0 if self._torrent_dict["progress"] == 1 else self._torrent_dict["eta"]
+            )  # set eta = 0 for completed torrents
+            self._torrent_dict["progress_bar"] = u.build_progress_bar(
+                self._torrent_dict["progress"]
             )
-            self._torrent_dict['info_deeplink'] = 'https://t.me/{}?start=info{}'.format(
-                self._qbt._bot_username,
-                self._torrent_dict['hash']
+        if "hash" in self._torrent_dict:
+            self._torrent_dict["manage_deeplink"] = (
+                "https://t.me/{}?start=manage{}".format(
+                    self._qbt._bot_username, self._torrent_dict["hash"]
+                )
+            )
+            self._torrent_dict["info_deeplink"] = "https://t.me/{}?start=info{}".format(
+                self._qbt._bot_username, self._torrent_dict["hash"]
             )
 
-        self._torrent_dict['short_name'] = self._torrent_dict['name']
-        if len(self._torrent_dict['name']) > 51:
-            self._torrent_dict['short_name'] = self._torrent_dict['name'][:51].strip() + '...'
-        self._torrent_dict['short_name_escaped'] = u.html_escape(self._torrent_dict['short_name'])
+        self._torrent_dict["short_name"] = self._torrent_dict["name"]
+        if len(self._torrent_dict["name"]) > 51:
+            self._torrent_dict["short_name"] = (
+                self._torrent_dict["name"][:51].strip() + "..."
+            )
+        self._torrent_dict["short_name_escaped"] = u.html_escape(
+            self._torrent_dict["short_name"]
+        )
 
-        self._torrent_dict['generic_speed'] = self._torrent_dict['dlspeed']
-        icon = '▼'
-        if self._torrent_dict['state'] in ('uploading', 'forcedUP', 'stalledUP'):
-            self._torrent_dict['generic_speed'] = self._torrent_dict['upspeed']
-            icon = '▲'
-        generic_speed_human_readable = u.get_human_readable(self._torrent_dict['generic_speed'])
-        self._torrent_dict['traffic_direction_icon'] = f"{icon}"
+        self._torrent_dict["generic_speed"] = self._torrent_dict["dlspeed"]
+        icon = "▼"
+        if self._torrent_dict["state"] in ("uploading", "forcedUP", "stalledUP"):
+            self._torrent_dict["generic_speed"] = self._torrent_dict["upspeed"]
+            icon = "▲"
+        generic_speed_human_readable = u.get_human_readable(
+            self._torrent_dict["generic_speed"]
+        )
+        self._torrent_dict["traffic_direction_icon"] = f"{icon}"
 
         for k, v in NEW_ATTRS.items():
             try:
@@ -162,7 +209,7 @@ class Torrent:
 
     def short_markup(self, *args, **kwargs):
         return kb.short_markup(self.hash, *args, **kwargs)
-    
+
     def dict(self):
         return self._torrent_dict
 
@@ -185,7 +232,7 @@ class Torrent:
             self.refresh(refresh_torrent_dict=True, get_torrent_generic_properties=True)
 
         base_string = base_string or TORRENT_STRING
-        
+
         return base_string.format(**self._torrent_dict)
 
     def pause(self):
@@ -231,12 +278,12 @@ class CustomClient(Client):
 
     @property
     def save_path(self):
-        return self.preferences()['save_path']
+        return self.preferences()["save_path"]
 
     def _set_torrents_queueing(self, value):
         value = bool(value)
 
-        return self.set_preferences(**{'queueing_enabled': value})
+        return self.set_preferences(**{"queueing_enabled": value})
 
     def enable_torrents_queueing(self):
         return self._set_torrents_queueing(True)
@@ -246,21 +293,24 @@ class CustomClient(Client):
 
     @property
     def torrents_queueing(self):
-        return self.preferences()['queueing_enabled']
+        return self.preferences()["queueing_enabled"]
 
     def torrents(self, get_torrent_generic_properties=True, **kwargs):
         torrents = super(CustomClient, self).torrents(**kwargs) or []
 
-        return [Torrent(self, torrent_dict, get_torrent_generic_properties) for torrent_dict in torrents]
+        return [
+            Torrent(self, torrent_dict, get_torrent_generic_properties)
+            for torrent_dict in torrents
+        ]
 
     # noinspection PyUnresolvedReferences
     def torrent(self, torrent_hash, get_torrent_generic_properties=True):
         # always set get_additional_torrent_properties to False in the following request,
         # we will get the additional properties later, just for the correct torrent
-        torrents = super(CustomClient, self).torrents(filter='all') or []
+        torrents = super(CustomClient, self).torrents(filter="all") or []
 
         for torrent_dict in torrents:
-            if torrent_dict['hash'].lower() == torrent_hash.lower():
+            if torrent_dict["hash"].lower() == torrent_hash.lower():
                 return Torrent(self, torrent_dict, get_torrent_generic_properties)
 
     # noinspection PyUnresolvedReferences
@@ -268,7 +318,7 @@ class CustomClient(Client):
         filtered = list()
         query = query.lower()
 
-        for torrent in self.torrents(filter='all'):
+        for torrent in self.torrents(filter="all"):
             if query in torrent.name.lower():
                 filtered.append(torrent)
 
@@ -277,13 +327,15 @@ class CustomClient(Client):
     def get_schedule(self):
         p = self.preferences()
 
-        if not p['scheduler_enabled']:
+        if not p["scheduler_enabled"]:
             return None
 
         return dict(
-            from_hour='{:0>2}:{:0>2}'.format(p['schedule_from_hour'], p['schedule_from_min']),
-            to_hour='{:0>2}:{:0>2}'.format(p['schedule_to_hour'], p['schedule_to_min']),
-            days=str(p['scheduler_days'])
+            from_hour="{:0>2}:{:0>2}".format(
+                p["schedule_from_hour"], p["schedule_from_min"]
+            ),
+            to_hour="{:0>2}:{:0>2}".format(p["schedule_to_hour"], p["schedule_to_min"]),
+            days=str(p["scheduler_days"]),
         )
 
     def get_alt_speed(self, human_readable=True):
@@ -292,13 +344,25 @@ class CustomClient(Client):
         result = dict()
 
         if human_readable:
-            result['status'] = 'on' if self.get_alternative_speed_status() else 'off'
-            result['alt_dl_limit'] = u.get_human_readable(p['alt_dl_limit'], 0) if p['alt_dl_limit'] > -1 else 'none'
-            result['alt_up_limit'] = u.get_human_readable(p['alt_up_limit'], 0) if p['alt_up_limit'] > -1 else 'none'
+            result["status"] = "on" if self.get_alternative_speed_status() else "off"
+            result["alt_dl_limit"] = (
+                u.get_human_readable(p["alt_dl_limit"], 0)
+                if p["alt_dl_limit"] > -1
+                else "none"
+            )
+            result["alt_up_limit"] = (
+                u.get_human_readable(p["alt_up_limit"], 0)
+                if p["alt_up_limit"] > -1
+                else "none"
+            )
         else:
-            result['status'] = bool(self.get_alternative_speed_status())
-            result['alt_dl_limit'] = p['alt_dl_limit'] if p['alt_dl_limit'] > -1 else None
-            result['alt_up_limit'] = p['alt_up_limit'] if p['alt_up_limit'] > -1 else None
+            result["status"] = bool(self.get_alternative_speed_status())
+            result["alt_dl_limit"] = (
+                p["alt_dl_limit"] if p["alt_dl_limit"] > -1 else None
+            )
+            result["alt_up_limit"] = (
+                p["alt_up_limit"] if p["alt_up_limit"] > -1 else None
+            )
 
         return result
 
@@ -306,16 +370,16 @@ class CustomClient(Client):
         tinfo = self.global_transfer_info
 
         return (
-            u.get_human_readable(tinfo['dl_info_speed']),
-            u.get_human_readable(tinfo['up_info_speed'])
+            u.get_human_readable(tinfo["dl_info_speed"]),
+            u.get_human_readable(tinfo["up_info_speed"]),
         )
 
     def get_global_speed_limit(self):
         p = self.preferences()
 
         return (
-            u.get_human_readable(p['dl_limit']) if p['dl_limit'] else None,
-            u.get_human_readable(p['up_limit']) if p['up_limit'] else None
+            u.get_human_readable(p["dl_limit"]) if p["dl_limit"] else None,
+            u.get_human_readable(p["up_limit"]) if p["up_limit"] else None,
         )
 
     def create_tags(self, tags):
@@ -324,14 +388,16 @@ class CustomClient(Client):
 
         tags_str = ",".join(tags)
 
-        return self._post('torrents/createTags', data={'tags': tags_str})
+        return self._post("torrents/createTags", data={"tags": tags_str})
 
     def add_tags(self, torrent_hash, tags: [str, List]):
         if isinstance(tags, str):
             tags = [tags]
 
         tags_str = ",".join(tags)
-        return self._post('torrents/addTags', data={'hashes': torrent_hash, 'tags': tags_str})
+        return self._post(
+            "torrents/addTags", data={"hashes": torrent_hash, "tags": tags_str}
+        )
 
     def remove_tags(self, torrent_hash, tags: [str, List] = None):
         if isinstance(tags, str):
@@ -341,17 +407,21 @@ class CustomClient(Client):
         else:
             tags_str = ""
 
-        return self._post('torrents/removeTags', data={'hashes': torrent_hash, 'tags': tags_str})
+        return self._post(
+            "torrents/removeTags", data={"hashes": torrent_hash, "tags": tags_str}
+        )
 
     def remove_trackers(self, torrent_hash, urls: [str, List]):
         if isinstance(urls, str):
             urls = [urls]
 
         urls_str = "|".join(urls)
-        return self._post('torrents/removeTrackers', data={'hash': torrent_hash, 'urls': urls_str})
+        return self._post(
+            "torrents/removeTrackers", data={"hash": torrent_hash, "urls": urls_str}
+        )
 
     def build_info(self):
-        return self._get('app/buildInfo')
+        return self._get("app/buildInfo")
 
 
 class OfflineClient:
@@ -365,10 +435,12 @@ class OfflineClient:
 
     def __getattr__(self, name):
         def internal(*args, **kwargs):
-            logger.debug('OfflineClient method called: %s', name)
+            logger.debug("OfflineClient method called: %s", name)
             self._raise()
 
         return internal()
 
     def _raise(self):
-        raise ConnectionError('cannot connect to qbittorrent ({})'.format(config.qbittorrent.url))
+        raise ConnectionError(
+            "cannot connect to qbittorrent ({})".format(config.qbittorrent.url)
+        )
